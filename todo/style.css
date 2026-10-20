@@ -1,0 +1,1249 @@
+/* ===== Colors and sizes in one place =====
+   These are "CSS variables". We name a color once here, then reuse it
+   below with var(--name). Change a value here and it updates everywhere. */
+:root {
+  --page: #ffffff;       /* the page background (plain white) */
+  --card-start: #c3cfff; /* top-left of the card's gradient (soft purple) */
+  --card-end: #ffd6e8;   /* bottom-right of the card's gradient (soft pink) */
+  --field: #ffffff;      /* the text box background (white in both modes) */
+  --field-text: #1f2340; /* the text you type in the box */
+  --text: #1f2340;       /* main text */
+  --muted: #5f6488;      /* lighter text (counter, date, finished tasks) */
+  --line: rgba(255, 255, 255, 0.7); /* thin see-through white divider lines */
+  --accent: #6c5ce7;     /* purple used for the button and checkboxes */
+  --accent-dark: #5a4bd6;
+  --danger: #ff6b81;     /* pink-red for delete */
+  --radius: 18px;        /* how round the corners are */
+  --burst-time: 1.2s;    /* how long the celebration emojis stay on screen */
+  --chip: rgba(255, 255, 255, 0.55); /* see-through background for labels and filter buttons */
+  --panel: rgba(255, 255, 255, 0.45); /* see-through panel behind each history day */
+
+  --error: #c0304a;        /* red for "please fill this in" messages */
+  --notice-bg: #fff1d6;    /* warm yellow background for the reminder */
+  --notice-text: #6b4500;  /* dark brown text on it */
+}
+
+/* ===== Dark mode =====
+   There are two ways dark mode turns on:
+   1. Your computer is set to dark mode, and you haven't picked light with the toggle.
+   2. You picked dark with the toggle button.
+   The toggle works by adding data-theme="dark" or data-theme="light"
+   to the <html> element (see the theme section in app.js). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #15172e;
+    --card-start: #2c2f6b;
+    --card-end: #5a2a55;
+    --text: #eef0ff;
+    --muted: #b4b8e0;
+    --line: rgba(255, 255, 255, 0.12);
+    --chip: rgba(255, 255, 255, 0.1);
+    --panel: rgba(0, 0, 0, 0.2);
+    --error: #ff9aac;
+    --notice-bg: #4a3410;
+    --notice-text: #ffd89a;
+    color-scheme: dark;   /* scrollbars and form controls go dark too */
+  }
+}
+
+/* The same dark colors, when picked with the toggle */
+:root[data-theme="dark"] {
+  --page: #15172e;
+  --card-start: #2c2f6b;
+  --card-end: #5a2a55;
+  --text: #eef0ff;
+  --muted: #b4b8e0;
+  --line: rgba(255, 255, 255, 0.12);
+  --chip: rgba(255, 255, 255, 0.1);
+  --panel: rgba(0, 0, 0, 0.2);
+  --error: #ff9aac;
+  --notice-bg: #4a3410;
+  --notice-text: #ffd89a;
+  color-scheme: dark;
+}
+
+/* ===== Page basics ===== */
+
+/* Make width/height include padding and borders (easier to reason about) */
+* {
+  box-sizing: border-box;
+}
+
+/* Anything with the "hidden" attribute stays hidden, even if a rule below sets display */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  background: var(--page);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;     /* fill the whole screen height */
+  padding: 48px 16px;
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: var(--page);
+}
+
+/* ===== Dark mode toggle (just right of the title) ===== */
+#theme-toggle {
+  flex-shrink: 0;         /* keep it round, never squished */
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  line-height: 1;
+  background: var(--chip);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(60, 50, 140, 0.15);
+  transition: transform 0.2s;
+}
+
+#theme-toggle:hover {
+  transform: rotate(-15deg) scale(1.08); /* a little wiggle on hover */
+}
+
+/* A clear outline when you reach it with the Tab key */
+#theme-toggle:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ===== The main card ===== */
+.container {
+  max-width: 480px;      /* don't get too wide on big screens */
+  margin: 0 auto;        /* center it horizontally */
+  /* A soft diagonal purple-to-pink gradient */
+  background: linear-gradient(135deg, var(--card-start), var(--card-end));
+  padding: 32px 28px;
+  border-radius: var(--radius);
+  box-shadow: 0 20px 50px rgba(60, 50, 140, 0.18); /* soft floating shadow */
+  /* "relative" lets us pin the clipboard drawing to this card's corner */
+  position: relative;
+}
+
+h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Today's date, shown under the title */
+#today {
+  margin: 4px 0 24px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* The title and the light/dark button side by side */
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Leave room on the right so the title never runs underneath the drawing */
+.greeting,
+.title-row,
+#today {
+  padding-right: 84px;
+}
+
+/* "Hi, Judith 👋  Change" above the title */
+.greeting {
+  margin: 0 0 4px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+#greeting-name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* The small round pencil button next to the name */
+#change-profile {
+  display: inline-grid;
+  place-items: center;     /* centers the pencil */
+  width: 26px;
+  height: 26px;
+  margin-left: 4px;
+  padding: 0;
+  vertical-align: middle;
+  color: var(--text);      /* readable on both the light and dark card */
+  background: var(--chip);
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Fills purple when you hover over it */
+#change-profile:hover {
+  color: #fff;
+  background: var(--accent);
+}
+
+/* ===== Show either the welcome screen or the app =====
+   The <html> element gets the class "needs-profile" until the user
+   has entered their details (see the small script in index.html). */
+.needs-profile #app {
+  display: none;
+}
+
+html:not(.needs-profile) #welcome {
+  display: none;
+}
+
+/* ===== Welcome screen ===== */
+.welcome-intro {
+  margin: 4px 0 24px;
+  color: var(--muted);
+}
+
+#welcome-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Labels above the name box and the gender options */
+.field-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#welcome-name {
+  padding: 12px 16px;
+  font: inherit;
+  color: var(--field-text);
+  background: var(--field);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#welcome-name:focus {
+  border-color: var(--accent);
+}
+
+/* The group of gender choices: pills that wrap onto new lines */
+.gender-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  border: none;            /* fieldsets have a border by default */
+}
+
+.gender-options legend {
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+/* Each choice looks like a pill; the radio circle sits inside it */
+.choice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 14px;
+  background: var(--chip);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.choice input {
+  margin: 0;
+  accent-color: var(--accent); /* colors the radio circle purple */
+}
+
+/* :has() means "a .choice that contains a checked radio": fill it purple */
+.choice:has(input:checked) {
+  color: #fff;
+  background: var(--accent);
+}
+
+.choice:has(input:checked) input {
+  accent-color: #fff;
+}
+
+/* Keyboard focus on a radio shows around the whole pill */
+.choice:has(input:focus-visible) {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The "Please enter your name." message */
+.form-error {
+  min-height: 1.4em;       /* keeps its space, so the button doesn't jump */
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--error);
+}
+
+/* The purple Continue / Save button */
+#welcome-submit {
+  padding: 12px 20px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+#welcome-submit:hover {
+  background: var(--accent-dark);
+}
+
+/* Cancel: a quiet text button under Save */
+#welcome-cancel {
+  padding: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border-radius: 12px;
+}
+
+#welcome-cancel:hover {
+  color: var(--text);
+}
+
+.welcome-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ===== Clipboard drawing in the top-right corner ===== */
+.corner-art {
+  position: absolute;     /* placed by top/right, relative to the card */
+  top: 20px;
+  right: 22px;
+  width: 76px;
+  height: 76px;
+  transform: rotate(8deg); /* a slight tilt looks more playful */
+  animation: bob 4s ease-in-out infinite; /* gently floats up and down forever */
+}
+
+/* The up-and-down floating movement used above */
+@keyframes bob {
+  0%,
+  100% {
+    transform: rotate(8deg) translateY(0);
+  }
+  50% {
+    transform: rotate(8deg) translateY(-5px);
+  }
+}
+
+/* Colors for each part of the drawing (SVG uses "fill" and "stroke"
+   instead of "background" and "border") */
+.corner-art .board {
+  fill: #ffffff;
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.corner-art .clip {
+  fill: var(--accent);
+}
+
+.corner-art .tick-done {
+  fill: var(--accent);
+}
+
+.corner-art .tick-empty {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.corner-art .tick-mark {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.corner-art .row-line {
+  stroke: #c9c6ee;
+  stroke-width: 4;
+  stroke-linecap: round;  /* rounded line ends */
+}
+
+/* Lines next to ticked rows are lighter, like crossed-off tasks */
+.corner-art .row-line.done {
+  stroke: #e6e4f8;
+}
+
+.corner-art .sparkle {
+  fill: var(--danger);
+}
+
+/* ===== End-of-day reminder ===== */
+#reminder-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -8px 0 20px;     /* sits just under the date */
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--notice-text);
+  background: var(--notice-bg);
+  border-radius: 12px;
+  animation: pop-in 0.3s ease-out; /* slides in, like new tasks */
+}
+
+.reminder-icon {
+  font-size: 20px;
+}
+
+/* The message takes the leftover space, pushing Dismiss to the right */
+#reminder-text {
+  flex: 1;
+}
+
+#reminder-dismiss {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--notice-text);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+}
+
+#reminder-dismiss:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* The setting under the counter: [x] Remind me ... at [20:00] */
+.reminder-setting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 8px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.reminder-setting label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.reminder-setting input[type="checkbox"] {
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+#reminder-time {
+  padding: 4px 8px;
+  font: inherit;
+  color: var(--field-text);
+  background: var(--field);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  outline: none;
+  color-scheme: light;     /* the time picker matches the white box */
+}
+
+#reminder-time:focus {
+  border-color: var(--accent);
+}
+
+/* The explanation under the setting takes its own line */
+#reminder-note {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 12px;
+  text-align: center;
+}
+
+#reminder-note:empty {
+  display: none;
+}
+
+/* ===== The form (text box + Add button) ===== */
+#task-form {
+  /* A grid: the text box gets the whole first row,
+     then the category, date and Add button share the second row */
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+}
+
+#task-form #task-input {
+  grid-column: 1 / -1;    /* stretch across every column */
+}
+
+#task-input {
+  flex: 1;               /* input takes up all leftover space */
+  min-width: 0;          /* lets the box shrink on tiny screens so Add still fits */
+  padding: 12px 16px;
+  font: inherit;         /* use the same font as the rest of the page */
+  line-height: 1.5;
+  resize: none;          /* JavaScript grows the box, so hide the drag handle */
+  max-height: 200px;     /* after ~7 lines, stop growing... */
+  overflow-y: auto;      /* ...and show a scrollbar instead */
+  color: var(--field-text);
+  background: var(--field);
+  border: 2px solid transparent; /* invisible until you click in the box */
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.2s; /* animate the border color change */
+}
+
+/* Highlight the box while you're typing in it */
+#task-input:focus {
+  border-color: var(--accent);
+}
+
+/* The category dropdown, styled to match the text box */
+#task-category {
+  padding: 12px 10px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--field-text);
+  background: var(--field);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+/* The date box, styled to match */
+#task-date {
+  min-width: 0;
+  padding: 12px 10px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--field-text);
+  background: var(--field);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  outline: none;
+  color-scheme: light;    /* the calendar pop-up matches the white box, even in dark mode */
+}
+
+#task-category:focus,
+#task-date:focus {
+  border-color: var(--accent);
+}
+
+#task-category {
+  min-width: 0;           /* lets it shrink so everything fits on one row */
+}
+
+/* ===== Filter buttons (All, Projects, House chores, ...) ===== */
+#filters {
+  display: flex;
+  flex-wrap: wrap;        /* move to a new line when there's no room */
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--chip);
+  border-radius: 999px;   /* pill shape */
+  transition: background 0.2s, color 0.2s;
+}
+
+.filter-btn:hover {
+  background: var(--field);
+  color: var(--field-text);
+}
+
+/* The selected filter is filled with purple */
+.filter-btn[aria-pressed="true"] {
+  color: #fff;
+  background: var(--accent);
+}
+
+/* The little number showing how many tasks are left */
+.filter-count {
+  min-width: 20px;
+  padding: 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  text-align: center;
+  font-variant-numeric: tabular-nums; /* numbers all the same width */
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+}
+
+.filter-btn[aria-pressed="true"] .filter-count {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ===== The row above the list (the All / Active / Done switch) ===== */
+.list-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding-bottom: 4px;
+}
+
+/* ===== All / Active / Done switch =====
+   Three buttons joined into one rounded bar (a "segmented control") */
+#status-filter {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: var(--chip);
+  border-radius: 999px;
+}
+
+#status-filter button {
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border-radius: 999px;
+  transition: background 0.2s, color 0.2s;
+}
+
+#status-filter button:hover {
+  color: var(--text);
+}
+
+/* The selected one looks like a white button sitting in the bar */
+#status-filter button[aria-pressed="true"] {
+  color: var(--field-text);
+  background: var(--field);
+  box-shadow: 0 2px 6px rgba(60, 50, 140, 0.15);
+}
+
+/* ===== Categories =====
+   Each category has an icon (set in app.js), shown before its name. */
+
+/* "+ New category": a dashed outline, so it looks different from the categories */
+.new-category-btn {
+  color: var(--accent);
+  background: transparent;
+  border: 1.5px dashed var(--accent);
+}
+
+.new-category-btn:hover {
+  color: #fff;
+  background: var(--accent);
+}
+
+/* The little form for a new category: name box, Add, Cancel */
+#category-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+#category-name {
+  flex: 1 1 160px;        /* grows to fill the row, wraps below 160px */
+  min-width: 0;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--field-text);
+  background: var(--field);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  outline: none;
+}
+
+#category-name:focus {
+  border-color: var(--accent);
+}
+
+#category-add {
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 10px;
+}
+
+#category-add:hover {
+  background: var(--accent-dark);
+}
+
+#category-cancel {
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border-radius: 10px;
+}
+
+#category-cancel:hover {
+  color: var(--text);
+}
+
+/* The row of icons to choose from, on its own line under the name box */
+#icon-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-basis: 100%;
+}
+
+/* Each icon is a small square tile */
+.icon-choice {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  background: var(--chip);
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.icon-choice:hover {
+  background: var(--field);
+}
+
+/* Hide the radio circle itself (the tile shows the choice instead),
+   but keep it usable with the keyboard and screen readers */
+.icon-choice input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* The picked icon gets a purple border */
+.icon-choice:has(input:checked) {
+  background: var(--field);
+  border-color: var(--accent);
+}
+
+/* Keyboard focus shows a clear outline */
+.icon-choice:has(input:focus-visible) {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* The error message takes its own full line under the form */
+#category-error {
+  flex-basis: 100%;
+  min-height: 0;
+  margin: 0;
+}
+
+/* "Edit category" and "Delete category" on the right of the row above the list */
+#edit-category {
+  margin-left: auto;      /* pushes it (and Delete next to it) to the right */
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border-radius: 999px;
+}
+
+#edit-category:hover {
+  color: var(--text);
+}
+
+#delete-category {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border-radius: 999px;
+  transition: background 0.2s, color 0.2s;
+}
+
+#delete-category:hover {
+  color: var(--error);
+}
+
+/* After the first click it asks "Click again to delete ...", in red */
+#delete-category[data-confirm="yes"] {
+  color: #fff;
+  background: var(--danger);
+}
+
+/* The icon in front of a category's name (filter buttons, labels, history) */
+.cat-icon {
+  flex-shrink: 0;
+  font-size: 1.05em;
+  line-height: 1;
+}
+
+/* In History, a little space between the icon and the ✓ */
+#history .cat-icon {
+  margin-right: 6px;
+}
+
+/* The small category label under each task (in the "All" view) */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--chip);
+  border-radius: 999px;
+}
+
+/* The row of labels under a task (overdue, category) */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* The red "Overdue" label, with a red dot in front.
+   ::before adds a tiny "fake" element at the start. */
+.overdue {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.overdue::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+}
+
+button {
+  font: inherit;
+  border: none;
+  cursor: pointer;       /* shows the hand cursor on hover */
+}
+
+/* The purple Add button */
+#task-form button {
+  padding: 12px 20px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 12px;
+  transition: background 0.2s, transform 0.1s;
+}
+
+#task-form button:hover {
+  background: var(--accent-dark);
+}
+
+/* Shrinks the button a tiny bit when clicked, so it feels "pressed" */
+#task-form button:active {
+  transform: scale(0.96);
+}
+
+/* ===== The task list ===== */
+/* "task-list" is a class (not an id) because there are now two kinds of
+   task lists: today's list and the lists in Upcoming. */
+.task-list {
+  list-style: none;      /* remove the default bullet points */
+  padding: 0;
+  margin: 0;
+}
+
+/* Today's list sits a comfortable distance below the toolbar row */
+#task-list {
+  margin-top: 20px;
+}
+
+/* Each task row */
+.task-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--line);
+  animation: pop-in 0.25s ease-out; /* new tasks slide in (see below) */
+}
+
+/* The slide-in animation used above */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Round custom checkbox =====
+   appearance: none hides the browser's plain checkbox so we can draw our own. */
+.task-list input[type="checkbox"] {
+  appearance: none;
+  flex-shrink: 0;        /* never let it get squished */
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  border: 2px solid var(--accent);
+  border-radius: 50%;    /* makes it a circle */
+  cursor: pointer;
+  display: grid;
+  place-content: center; /* centers the tick mark inside */
+  transition: background 0.2s;
+}
+
+/* When checked, fill the circle with purple */
+.task-list input[type="checkbox"]:checked {
+  background: var(--accent);
+}
+
+/* Draw a white tick mark using ::after (a tiny "fake" element) */
+.task-list input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* The task text and its label stack in a column that fills the row,
+   pushing Delete to the right */
+.task-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.task-text {
+  white-space: pre-wrap;  /* keep the line breaks the user typed */
+  word-break: break-word; /* long words wrap instead of overflowing */
+  transition: color 0.2s;
+}
+
+/* When a task is done, cross it out and fade it */
+.task-list li.done .task-text {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+/* ===== The delete (×) button ===== */
+.delete-btn {
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--muted);
+  background: transparent;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Turns pink when you hover over it */
+.delete-btn:hover {
+  color: #fff;
+  background: var(--danger);
+}
+
+/* ===== Counter at the bottom ===== */
+#task-count {
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ===== Upcoming section ===== */
+#upcoming {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 2px solid var(--line);
+}
+
+#upcoming h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+/* The message shown when nothing is planned */
+#upcoming-list {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Each day heading, e.g. "Tomorrow" */
+#upcoming h3 {
+  margin: 14px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+#upcoming h3:first-child {
+  margin-top: 0;
+}
+
+/* Task text in Upcoming uses the normal text color, not the grey message color */
+#upcoming .task-list {
+  color: var(--text);
+  font-size: 16px;
+}
+
+/* ===== History section ===== */
+#history {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 2px solid var(--line); /* separates it from the to-do list */
+}
+
+#history h2 {
+  margin: 0 0 12px;
+  font-size: 18px;
+}
+
+/* The message shown when there's no history yet */
+#history-list {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Each day is a <details> box you can click to open or close */
+#history details {
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  background: var(--panel); /* see-through panel */
+  border-radius: 12px;
+}
+
+/* The clickable day heading, e.g. "Today · 3 done" */
+#history summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* The tasks finished that day */
+#history ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+
+/* Keep line breaks in finished tasks too */
+#history li span {
+  white-space: pre-wrap;
+}
+
+#history li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+  word-break: break-word;
+}
+
+/* The task text takes the leftover space, pushing the time and × to the right */
+.history-text {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The time each task was finished */
+#history small {
+  flex-shrink: 0;
+  color: var(--muted);
+}
+
+/* The small × next to each history entry */
+.history-delete {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--muted);
+  background: transparent;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+}
+
+/* Turns pink when you hover over it, like the task delete button */
+.history-delete:hover {
+  color: #fff;
+  background: var(--danger);
+}
+
+/* "Delete this day" at the bottom of each day */
+.history-delete-day {
+  display: block;
+  margin: 8px 0 2px auto;  /* "auto" on the left pushes it to the right */
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border-radius: 999px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.history-delete-day:hover {
+  color: var(--error);
+}
+
+/* After the first click it asks "Click again to delete...", in red */
+.history-delete-day[data-confirm="yes"] {
+  color: #fff;
+  background: var(--danger);
+}
+
+/* ===== Celebration 🎉 ===== */
+
+/* Each flying emoji. position: fixed places it at an exact spot on the screen
+   (JavaScript sets left/top to where the checkbox is). */
+.confetti {
+  position: fixed;
+  z-index: 10;            /* sit on top of everything else */
+  font-size: 48px;        /* big party emojis */
+  pointer-events: none;   /* clicks pass straight through it */
+  transform: translate(-50%, -50%); /* center the emoji on that spot */
+  animation: burst var(--burst-time) ease-out forwards; /* "forwards" keeps the last frame (invisible) */
+}
+
+/* A quick "pop": each emoji bursts out by --dx / --dy (set in JavaScript),
+   grows a little, then floats up slightly and fades away. */
+@keyframes burst {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) - 30px)) scale(1);
+  }
+}
+
+/* The message bubble at the bottom of the screen */
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px)); /* clear of a phone's home bar */
+  z-index: 10;
+  /* As wide as the message needs, but never wider than the screen (minus a gap each side).
+     Without this, a box placed at left: 50% only gets half the screen's width. */
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  text-align: center;
+  padding: 12px 22px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border-radius: 999px;   /* a pill shape */
+  box-shadow: 0 10px 30px rgba(108, 92, 231, 0.35);
+  pointer-events: none;
+  /* Hidden by default: invisible and pushed slightly down */
+  opacity: 0;
+  transform: translate(-50%, 20px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+/* JavaScript adds the "show" class to slide it up into view */
+#toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Some people turn on "reduce motion" in their computer settings because
+   movement makes them feel unwell. For them, skip the flying emojis and
+   just fade the message in without sliding. */
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+  .corner-art {
+    animation: none; /* keep the clipboard drawing still */
+  }
+  #toast,
+  #toast.show {
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ===== Small screens (phones) ===== */
+@media (max-width: 420px) {
+  .container {
+    padding: 24px 18px;
+  }
+  h1 {
+    font-size: 24px;
+  }
+  /* On phones: category and date share a row, and Add gets its own full row */
+  #task-form {
+    grid-template-columns: 1fr 1fr;
+  }
+  #task-form button {
+    grid-column: 1 / -1;
+  }
+  /* A smaller drawing on phones, with less space saved for it */
+  .corner-art {
+    width: 56px;
+    height: 56px;
+    top: 16px;
+    right: 14px;
+  }
+  .greeting,
+  .title-row,
+  #today {
+    padding-right: 60px;
+  }
+}
+
+/* ===== Very small phones ===== */
+/* Shrink a few things so the title and its button stay on one line,
+   and the date fits in its box */
+@media (max-width: 360px) {
+  h1 {
+    font-size: 21px;
+  }
+  .title-row {
+    gap: 8px;
+  }
+  #theme-toggle {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  #task-date,
+  #task-category {
+    padding-inline: 6px;
+    font-size: 14px;
+  }
+}

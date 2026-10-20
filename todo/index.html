@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Tells the browser which characters to use (supports emoji, accents, etc.) -->
+  <meta charset="UTF-8">
+  <!-- Makes the page scale properly on phones -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My To-Do List</title>
+  <!-- Load the free "Poppins" font from Google Fonts.
+       If you're offline, the page falls back to your computer's normal font. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Link our stylesheet so the page looks nice -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Apply the saved light/dark choice straight away, before the page appears,
+       so it doesn't flash the wrong colors for a moment.
+       (try/catch: some browsers block storage, and that's fine.) -->
+  <!-- It also checks whether we already know the user's name. If not, it adds the
+       "needs-profile" class, and the CSS shows the welcome screen instead of the list. -->
+  <script>
+    try {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        document.documentElement.dataset.theme = savedTheme;
+      }
+      if (!localStorage.getItem("profile")) {
+        document.documentElement.classList.add("needs-profile");
+      }
+    } catch (error) {
+      document.documentElement.classList.add("needs-profile");
+    }
+  </script>
+</head>
+<body>
+  <!-- ===== Welcome screen =====
+       Shown until the user has entered their name and gender. -->
+  <section id="welcome" class="container" aria-labelledby="welcome-title">
+    <h1 id="welcome-title">Welcome! 👋</h1>
+    <p class="welcome-intro" id="welcome-intro">Tell us a little about you to get started.</p>
+
+    <!-- novalidate: we check the answers ourselves in app.js and show friendly messages -->
+    <form id="welcome-form" novalidate>
+      <!-- <label for="..."> links the text to the box, so clicking the text focuses the box -->
+      <label class="field-label" for="welcome-name">Your name</label>
+      <input type="text" id="welcome-name" name="name" maxlength="40" autocomplete="given-name">
+
+      <!-- A <fieldset> groups related choices; its <legend> is the group's label -->
+      <fieldset class="gender-options">
+        <legend class="field-label">Gender</legend>
+        <!-- Radio buttons with the same name="gender": only one can be picked -->
+        <label class="choice"><input type="radio" name="gender" value="female"> Female</label>
+        <label class="choice"><input type="radio" name="gender" value="male"> Male</label>
+        <label class="choice"><input type="radio" name="gender" value="prefer-not-to-say"> Prefer not to say</label>
+      </fieldset>
+
+      <!-- Shows a message if something is missing. role="alert" makes screen readers read it out. -->
+      <p id="welcome-error" class="form-error" role="alert"></p>
+
+      <button type="submit" id="welcome-submit">Continue</button>
+      <!-- Only shown when editing details you already saved (hidden on the first visit) -->
+      <button type="button" id="welcome-cancel" hidden>Cancel</button>
+      <p class="welcome-note">Your details are saved only in this browser.</p>
+    </form>
+  </section>
+
+  <!-- The main box that holds everything -->
+  <main class="container" id="app">
+    <!-- A little clipboard drawing for the top-right corner.
+         <svg> lets us draw shapes with code instead of using an image file.
+         aria-hidden="true" tells screen readers to skip it (it's just decoration). -->
+    <svg class="corner-art" viewBox="0 0 80 80" aria-hidden="true">
+      <!-- The clipboard board -->
+      <rect class="board" x="14" y="12" width="52" height="62" rx="8" />
+      <!-- The metal clip at the top -->
+      <rect class="clip" x="28" y="6" width="24" height="12" rx="4" />
+
+      <!-- Row 1: a ticked circle and a line of "text" -->
+      <circle class="tick-done" cx="26" cy="32" r="5" />
+      <path class="tick-mark" d="M23.5 32 l2 2 l3.5 -4" />
+      <line class="row-line done" x1="36" y1="32" x2="56" y2="32" />
+
+      <!-- Row 2: also ticked -->
+      <circle class="tick-done" cx="26" cy="46" r="5" />
+      <path class="tick-mark" d="M23.5 46 l2 2 l3.5 -4" />
+      <line class="row-line done" x1="36" y1="46" x2="52" y2="46" />
+
+      <!-- Row 3: not done yet (empty circle) -->
+      <circle class="tick-empty" cx="26" cy="60" r="5" />
+      <line class="row-line" x1="36" y1="60" x2="56" y2="60" />
+
+      <!-- A little pink sparkle (a 4-pointed star) -->
+      <path class="sparkle" d="M70 6 l2 5 l5 2 l-5 2 l-2 5 l-2 -5 l-5 -2 l5 -2 z" />
+    </svg>
+
+    <!-- A greeting with the user's name, and a pencil button to edit their details -->
+    <p class="greeting">
+      Hi, <span id="greeting-name"></span> 👋
+      <button type="button" id="change-profile" aria-label="Edit your name and details" title="Edit your name and details">
+        <!-- A small pencil drawn with SVG. currentColor = the button's text color. -->
+        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+          <path d="M4 20h4L19 9l-4-4L4 16v4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+          <path d="M13.5 6.5l4 4" fill="none" stroke="currentColor" stroke-width="2" />
+        </svg>
+      </button>
+    </p>
+
+    <!-- The title with the light/dark mode button just to its right -->
+    <div class="title-row">
+      <h1>My To-Do List</h1>
+      <!-- Switches between light and dark mode. JavaScript sets the icon and label. -->
+      <button type="button" id="theme-toggle"></button>
+    </div>
+    <!-- JavaScript fills this in with today's date -->
+    <p id="today"></p>
+
+    <!-- The end-of-day reminder. Shown when it's past your reminder time
+         and some of today's tasks aren't done yet. -->
+    <div id="reminder-banner" role="status" hidden>
+      <span class="reminder-icon" aria-hidden="true">⏰</span>
+      <span id="reminder-text"></span>
+      <button type="button" id="reminder-dismiss">Dismiss</button>
+    </div>
+
+    <!-- The form where you type a new task.
+         The text box is a <textarea>, so pressing Enter starts a new line.
+         Click "Add" (or press Ctrl+Enter / ⌘+Enter) to add the task. -->
+    <form id="task-form">
+      <textarea
+        id="task-input"
+        rows="1"
+        placeholder="What do you need to do?"
+        aria-label="New task"
+      ></textarea>
+      <!-- Pick a category for the new task. JavaScript adds the options. -->
+      <select id="task-category" aria-label="Category"></select>
+      <!-- Pick the day the task is for. Starts on today; choose a later day to plan ahead. -->
+      <input type="date" id="task-date" aria-label="Date" title="Day for this task">
+      <button type="submit" title="Add task (Ctrl+Enter or ⌘+Enter)">Add</button>
+    </form>
+
+    <!-- Filter buttons (All, Projects, ...). JavaScript creates them. -->
+    <div id="filters" role="group" aria-label="Show tasks from"></div>
+
+    <!-- The box for making your own category. Hidden until you click "+ New category". -->
+    <form id="category-form" hidden>
+      <input type="text" id="category-name" maxlength="24" placeholder="Category name" aria-label="New category name" autocomplete="off">
+      <button type="submit" id="category-add">Add</button>
+      <button type="button" id="category-cancel">Cancel</button>
+      <!-- A row of icons to choose from. JavaScript adds them, and picks one
+           that matches the name as you type. -->
+      <div id="icon-picker" role="radiogroup" aria-label="Choose an icon"></div>
+      <p id="category-error" class="form-error" role="alert"></p>
+    </form>
+
+    <!-- A row just above the list with the All / Active / Done switch -->
+    <div class="list-toolbar">
+      <!-- data-status="..." is a custom attribute JavaScript reads to know which button is which -->
+      <div id="status-filter" role="group" aria-label="Show tasks that are">
+        <button type="button" data-status="all">All</button>
+        <button type="button" data-status="active">Active</button>
+        <button type="button" data-status="done">Done</button>
+      </div>
+
+      <!-- Only shown when one of your own categories is selected -->
+      <button type="button" id="edit-category" hidden>Edit category</button>
+      <button type="button" id="delete-category" hidden>Delete category</button>
+    </div>
+
+    <!-- An empty list. JavaScript will fill it with tasks. -->
+    <ul id="task-list" class="task-list"></ul>
+
+    <!-- Shows how many tasks are left -->
+    <p id="task-count"></p>
+
+    <!-- Reminder setting: on/off and the time -->
+    <div class="reminder-setting">
+      <label for="reminder-on">
+        <input type="checkbox" id="reminder-on">
+        Remind me about unfinished tasks at
+      </label>
+      <input type="time" id="reminder-time" aria-label="Reminder time">
+      <p id="reminder-note"></p>
+    </div>
+
+    <!-- Upcoming: tasks planned for later days.
+         JavaScript fills in #upcoming-list. -->
+    <section id="upcoming">
+      <h2>Upcoming</h2>
+      <div id="upcoming-list"></div>
+    </section>
+
+    <!-- History: everything you've finished, grouped by day.
+         JavaScript fills in #history-list. -->
+    <section id="history">
+      <h2>History</h2>
+      <div id="history-list"></div>
+    </section>
+  </main>
+
+  <!-- The "All done for today! 🎉" message that pops up when every task is finished.
+       role="status" makes screen readers read it out loud too. -->
+  <div id="toast" role="status"></div>
+
+  <!-- Load our JavaScript last, so the HTML above already exists when it runs -->
+  <script src="app.js"></script>
+</body>
+</html>
