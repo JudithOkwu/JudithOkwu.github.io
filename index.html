@@ -241,6 +241,11 @@ h2 em { color: var(--accent); }
 .card-link.stretch::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
 .card.featured:has(.stretch:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
 
+/* Portfolio screenshot */
+.preview.site-shot { padding: 26px 26px 0; place-items: start center; }
+.preview.site-shot img { display: block; width: 100%; height: auto; border-radius: 10px 10px 0 0; box-shadow: 0 16px 34px -12px rgba(0, 0, 0, .45); transition: transform .35s; }
+.card:hover .preview.site-shot img { transform: translateY(-5px) scale(1.02); }
+
 /* To-do screenshot */
 .card.featured .preview.shot { padding: 40px 36px 0; place-items: start center; background: linear-gradient(160deg, #c4cbfb 0%, #ddd2f6 55%, #f5d5e7 100%); }
 .preview.shot img { display: block; width: min(100%, 360px); height: auto; border-radius: 16px 16px 0 0; box-shadow: 0 18px 40px -14px rgba(60, 40, 140, .45); transition: transform .35s; }
@@ -448,12 +453,8 @@ button.copy:hover { transform: translateY(-2px); filter: brightness(1.08); }
         </article>
 
         <article class="card">
-          <div class="preview p1">
-            <div class="mock">
-              <div class="bar dark"></div>
-              <div class="bar short"></div>
-              <div class="row"><div></div><div></div><div></div></div>
-            </div>
+          <div class="preview p1 site-shot">
+            <img src="images/portfolio-site.jpg" alt="Screenshot of this portfolio's homepage: the headline Hi, I'm Judith, two buttons, and the AI build-session card" width="1200" height="750" loading="lazy">
           </div>
           <div class="card-body">
             <div class="card-meta"><span>Website</span><span>2026</span></div>
