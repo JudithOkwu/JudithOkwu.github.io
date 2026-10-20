@@ -1,0 +1,591 @@
+<title>Healthy Habits Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: photo-led field guide. Full-bleed photo hero with a floating targets bar, a photo-tile index, zigzag habit spreads with badges pinned to each photo, a motivational band, then the daily check-in. */
+:root {
+  --bg: #F2F6F1;
+  --surface: #FFFFFF;
+  --fg: #142019;
+  --muted: #52645A;
+  --line: #D4DFD6;
+  --accent: #1E7A54;
+  --accent-soft: #DDF0E4;
+  --accent-ink: #FFFFFF;
+  --sun: #F2B134;
+  --coral: #E8684A;
+  --on-photo: #FFFFFF;
+  --shade: rgba(9, 20, 14, .72);
+  --shadow: 0 18px 40px -18px rgba(20, 50, 35, .35);
+
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1612; --surface: #16211B; --fg: #E4EEE8; --muted: #9CB0A5; --line: #283A31;
+    --accent: #5CC994; --accent-soft: #183326; --accent-ink: #0E1612; --sun: #F0B445; --coral: #EF7D61;
+    --shadow: 0 18px 40px -18px rgba(0, 0, 0, .7);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1612; --surface: #16211B; --fg: #E4EEE8; --muted: #9CB0A5; --line: #283A31;
+  --accent: #5CC994; --accent-soft: #183326; --accent-ink: #0E1612; --sun: #F0B445; --coral: #EF7D61;
+  --shadow: 0 18px 40px -18px rgba(0, 0, 0, .7);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--body); font-size: 1.0625rem; line-height: 1.6;
+  padding-inline: 20px; padding-block: 20px 48px;
+}
+.wrap { max-width: 1180px; margin-inline: auto; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.06; }
+p { margin: 0; }
+img { display: block; max-width: 100%; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
+.eyebrow {
+  font-family: var(--mono); font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: var(--accent);
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative; border-radius: 32px; overflow: hidden; min-height: 560px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  color: var(--on-photo); isolation: isolate;
+}
+.hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transform: scale(1.04); animation: settle 1.6s ease-out forwards; }
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(100deg, rgba(8, 22, 15, .86) 0%, rgba(8, 22, 15, .6) 45%, rgba(8, 22, 15, .1) 80%),
+              linear-gradient(0deg, rgba(8, 22, 15, .7) 0%, transparent 40%);
+}
+@keyframes settle { to { transform: scale(1); } }
+.nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 22px clamp(20px, 4vw, 44px); }
+.brand { font-family: var(--display); font-weight: 800; font-size: 1.15rem; display: flex; align-items: center; gap: 10px; }
+.brand svg { width: 30px; height: 30px; }
+.pill {
+  display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 600; font-size: .95rem;
+  padding: 10px 18px; border-radius: 999px; transition: transform .15s, background .15s;
+}
+.pill:hover { transform: translateY(-1px); }
+.pill.light { background: rgba(255, 255, 255, .16); color: var(--on-photo); border: 1px solid rgba(255, 255, 255, .35); backdrop-filter: blur(8px); }
+.pill.solid { background: var(--sun); color: #1B1405; }
+.hero-copy { padding: 24px clamp(20px, 4vw, 44px) 0; max-width: 700px; }
+.hero-copy .eyebrow { color: var(--sun); }
+.hero h1 { font-size: clamp(2.6rem, 6.4vw, 5rem); font-weight: 800; letter-spacing: -.025em; margin-top: 14px; }
+.hero h1 em { font-style: normal; color: var(--sun); }
+.hero .lede { margin-top: 18px; font-size: 1.18rem; color: rgba(255, 255, 255, .86); max-width: 33em; }
+.hero .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.targets {
+  margin: 36px clamp(14px, 3vw, 28px) clamp(14px, 3vw, 28px);
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px;
+  background: rgba(255, 255, 255, .22); border-radius: 22px; overflow: hidden;
+  backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, .25);
+}
+.targets div { background: rgba(10, 24, 17, .5); padding: 16px 20px; }
+.targets b { display: block; font-family: var(--display); font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.targets span { font-size: .88rem; color: rgba(255, 255, 255, .78); }
+
+/* ---------- Photo index ---------- */
+.section-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+.section-head h2 { font-size: clamp(1.8rem, 3.6vw, 2.6rem); font-weight: 800; letter-spacing: -.02em; margin-top: 8px; }
+.section-head p { color: var(--muted); max-width: 30em; }
+.index { padding-block: 64px 24px; }
+.tiles { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+.tiles a {
+  position: relative; display: block; aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden;
+  text-decoration: none; color: var(--on-photo); box-shadow: var(--shadow);
+}
+.tiles img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.tiles a::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, var(--shade) 0%, transparent 60%); }
+.tiles a:hover img { transform: scale(1.07); }
+.tiles .t { position: absolute; left: 14px; right: 14px; bottom: 12px; z-index: 1; }
+.tiles .t small { display: block; font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--sun); }
+.tiles .t span { font-family: var(--display); font-weight: 700; font-size: 1.1rem; line-height: 1.15; }
+
+/* ---------- Habit spreads ---------- */
+.habits { display: grid; gap: 96px; padding-block: 56px 24px; }
+.habit { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; scroll-margin-top: 24px; }
+.habit > * { min-width: 0; }
+.habit:nth-child(even) .photo { order: 2; }
+.photo { position: relative; }
+.photo img {
+  width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 28px; box-shadow: var(--shadow);
+}
+.photo::before {
+  content: ""; position: absolute; inset: 18px -18px -18px 18px; border-radius: 28px; z-index: -1;
+  background: var(--accent-soft);
+}
+.habit:nth-child(even) .photo::before { inset: 18px 18px -18px -18px; }
+.photo { isolation: isolate; }
+.badge {
+  position: absolute; left: 18px; bottom: 18px; background: var(--surface); color: var(--fg);
+  border-radius: 18px; padding: 12px 16px; box-shadow: var(--shadow); max-width: calc(100% - 36px);
+}
+.badge small { display: block; font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.badge b { font-family: var(--display); font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+.cat { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.tag {
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+  padding: 4px 11px; border-radius: 999px; background: var(--accent-soft); color: var(--accent);
+}
+.tag.new { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
+.habit h2 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); font-weight: 800; letter-spacing: -.02em; margin-top: 14px; }
+.habit .why { margin-top: 14px; color: var(--muted); max-width: 36em; font-size: 1.08rem; }
+.habit .target-note { margin-top: 10px; font-size: .92rem; color: var(--muted); }
+.steps-box { margin-top: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px 20px; }
+.steps-box h3 { font-family: var(--mono); font-size: .74rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.steps { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 9px; }
+.steps li { display: grid; grid-template-columns: 24px 1fr; gap: 8px; align-items: start; }
+.steps li::before {
+  content: ""; width: 18px; height: 18px; margin-top: 4px; border-radius: 50%;
+  background: var(--accent-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.5l2.5 2.5L13 6.5' fill='none' stroke='%231E7A54' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 18px no-repeat;
+}
+
+/* ---------- Band ---------- */
+.band {
+  margin-block: 40px; border-radius: 32px; padding: clamp(28px, 5vw, 56px);
+  background: var(--accent); color: var(--accent-ink);
+  display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: center;
+}
+.band > * { min-width: 0; }
+.band h2 { font-size: clamp(2rem, 4.4vw, 3.2rem); font-weight: 800; letter-spacing: -.02em; }
+.band p { font-size: 1.08rem; opacity: .9; }
+.band ol { margin: 14px 0 0; padding-left: 1.2em; display: grid; gap: 6px; }
+
+/* ---------- Check-in ---------- */
+.checkin {
+  margin-top: 56px; background: var(--surface); border: 1px solid var(--line); border-radius: 32px;
+  padding: clamp(22px, 4vw, 44px); display: grid; grid-template-columns: 290px 1fr; gap: 40px; align-items: start;
+  scroll-margin-top: 24px; box-shadow: var(--shadow);
+}
+.checkin > * { min-width: 0; }
+.checkin h2 { font-size: 2.2rem; font-weight: 800; margin-top: 10px; letter-spacing: -.02em; }
+.checkin p.note { color: var(--muted); margin-top: 10px; font-size: .95rem; }
+.ring { margin-top: 22px; position: relative; width: 170px; height: 170px; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring .count {
+  position: absolute; inset: 0; display: grid; place-content: center; text-align: center;
+  font-family: var(--display); font-weight: 800; font-size: 2.4rem; line-height: 1; font-variant-numeric: tabular-nums;
+}
+.ring .count small { display: block; font-family: var(--mono); font-weight: 500; font-size: .7rem; color: var(--muted); margin-top: 6px; letter-spacing: .08em; }
+#ringFg { transition: stroke-dashoffset .45s ease; }
+#cheer { margin-top: 14px; font-weight: 600; color: var(--accent); min-height: 1.6em; }
+.reset {
+  margin-top: 12px; font: inherit; font-size: .9rem; font-weight: 600; background: none; color: var(--fg);
+  border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; cursor: pointer;
+}
+.reset:hover { border-color: var(--accent); }
+.checks { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.checks label {
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px; border-radius: 16px;
+  border: 1px solid var(--line); background: var(--bg); cursor: pointer; transition: border-color .15s, background .15s;
+}
+.checks label:hover { border-color: var(--accent); }
+.checks label:has(input:checked) { background: var(--accent-soft); border-color: var(--accent); }
+.checks img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; flex: none; }
+.checks .lbl { flex: 1; min-width: 0; }
+.checks .lbl small { display: block; font-family: var(--mono); font-size: .7rem; color: var(--muted); }
+.checks input { width: 22px; height: 22px; accent-color: var(--accent); flex: none; margin: 0; order: 2; }
+
+footer { margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted); font-size: .88rem; display: grid; gap: 8px; max-width: 64em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero > img { animation: none; transform: none; }
+  .tiles img, .pill { transition: none; }
+}
+@media (max-width: 960px) {
+  .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tiles li:nth-child(n+10) { grid-column: span 3; }
+  .tiles li:nth-child(n+10) a { aspect-ratio: 16 / 7; }
+  .targets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 860px) {
+  .habit, .checkin, .band { grid-template-columns: 1fr; gap: 32px; }
+  .habit:nth-child(even) .photo { order: 0; }
+  .habits { gap: 72px; }
+  .hero { min-height: 0; }
+}
+@media (max-width: 560px) {
+  body { padding-inline: 16px; }
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .tiles li:nth-child(n+10) { grid-column: auto; }
+  .tiles li:nth-child(n+10) a { aspect-ratio: 4 / 5; }
+  .checks { grid-template-columns: 1fr; }
+  .nav .pill.light { display: none; }
+  .photo::before { inset: 12px -8px -12px 8px; }
+  .habit:nth-child(even) .photo::before { inset: 12px 8px -12px -8px; }
+  .targets b { font-size: 1.3rem; }
+}
+</style>
+
+<div class="wrap">
+
+  <header class="hero">
+    <img src="images/hero.jpg" alt="A group of women doing a fitness class on yoga mats in a bright studio">
+    <div class="nav">
+      <div class="brand">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#F2B134"/><path d="M10 17c0-5 4-8 11-8 0 7-3 11-8 11-1 0-2 0-3-1" fill="none" stroke="#14301F" stroke-width="2.4" stroke-linecap="round"/><path d="M9 23c3-4 6-7 10-9" fill="none" stroke="#14301F" stroke-width="2.4" stroke-linecap="round"/></svg>
+        Healthy Habits
+      </div>
+      <a class="pill light" href="#checkin">Today's check-in</a>
+    </div>
+    <div class="hero-copy">
+      <p class="eyebrow">A practical guide to living well</p>
+      <h1>Small habits, done daily, add up to a <em>healthy life.</em></h1>
+      <p class="lede">You don't need a total makeover. Pick one habit, start small, and build from there. Each section explains why it matters, the target experts recommend, and simple first steps.</p>
+      <div class="ctas">
+        <a class="pill solid" href="#habits">Explore the 10 habits</a>
+        <a class="pill light" href="#checkin">Track today</a>
+      </div>
+    </div>
+    <div class="targets" aria-label="Key weekly targets">
+      <div><b>150 min</b><span>moderate activity a week</span></div>
+      <div><b>2+ days</b><span>of strength training</span></div>
+      <div><b>7–9 h</b><span>of sleep a night</span></div>
+      <div><b>5 a day</b><span>portions of fruit &amp; veg</span></div>
+    </div>
+  </header>
+
+  <nav class="index" id="habits" aria-labelledby="indexTitle">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">The habits</p>
+        <h2 id="indexTitle">Ten ways to feel better every day</h2>
+      </div>
+      <p>The first four are the foundations. The other six fill in the rest of a healthy life.</p>
+    </div>
+    <ul class="tiles">
+      <li><a href="#gym"><img src="images/gym.jpg" alt=""><div class="t"><small>Move</small><span>Gym &amp; strength</span></div></a></li>
+      <li><a href="#exercise"><img src="images/exercise.jpg" alt=""><div class="t"><small>Move</small><span>Exercise</span></div></a></li>
+      <li><a href="#diet"><img src="images/diet.jpg" alt=""><div class="t"><small>Eat</small><span>Balanced diet</span></div></a></li>
+      <li><a href="#sleep"><img src="images/sleep.jpg" alt=""><div class="t"><small>Rest</small><span>Good sleep</span></div></a></li>
+      <li><a href="#water"><img src="images/water.jpg" alt=""><div class="t"><small>Eat</small><span>Hydration</span></div></a></li>
+      <li><a href="#mind"><img src="images/mind.jpg" alt=""><div class="t"><small>Mind</small><span>Stress &amp; mental health</span></div></a></li>
+      <li><a href="#outdoors"><img src="images/outdoors.jpg" alt=""><div class="t"><small>Rest</small><span>Sunlight &amp; nature</span></div></a></li>
+      <li><a href="#social"><img src="images/social.jpg" alt=""><div class="t"><small>Connect</small><span>Social connection</span></div></a></li>
+      <li><a href="#limits"><img src="images/limits.jpg" alt=""><div class="t"><small>Prevent</small><span>Alcohol &amp; tobacco</span></div></a></li>
+      <li><a href="#checkups"><img src="images/checkups.jpg" alt=""><div class="t"><small>Prevent</small><span>Health check-ups</span></div></a></li>
+    </ul>
+  </nav>
+
+  <main class="habits">
+
+    <article class="habit" id="gym">
+      <figure class="photo" style="margin:0">
+        <img src="images/gym.jpg" alt="Person gripping a loaded barbell on a gym floor, ready to lift" loading="lazy">
+        <div class="badge"><small>Target</small><b>2+ days / week</b></div>
+      </figure>
+      <div>
+        <div class="cat"><span class="tag">Move</span><span class="tag">Strength</span></div>
+        <h2>Go to the gym and lift</h2>
+        <p class="why">Strength training builds muscle and bone density, keeps your metabolism active, and protects your joints and balance as you get older. Everyday tasks like carrying shopping and climbing stairs get easier too.</p>
+        <p class="target-note">Work all the major muscle groups: legs, hips, back, chest, shoulders, arms and core.</p>
+        <div class="steps-box">
+          <h3>How to start</h3>
+          <ul class="steps">
+            <li>Learn five basic movements: squat, hinge (deadlift), push, pull and carry.</li>
+            <li>Start light with good form. Add weight only when the last two reps feel controlled.</li>
+            <li>Give each muscle group about 48 hours to recover before training it hard again.</li>
+            <li>Ask for a gym induction or book one session with a trainer. No gym? Push-ups, squats and lunges at home count.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="habit" id="exercise">
+      <figure class="photo" style="margin:0">
+        <img src="images/exercise.jpg" alt="Three people running together along a road at sunrise" loading="lazy">
+        <div class="badge"><small>Target</small><b>150–300 min / week</b></div>
+      </figure>
+      <div>
+        <div class="cat"><span class="tag">Move</span><span class="tag">Cardio</span></div>
+        <h2>Exercise and move every day</h2>
+        <p class="why">Regular movement strengthens your heart and lungs, lifts your mood, helps manage weight, and lowers the risk of type 2 diabetes, heart disease and some cancers. Every minute counts, even in short bursts.</p>
+        <p class="target-note">That's moderate activity, or 75–150 minutes if it's vigorous like running.</p>
+        <div class="steps-box">
+          <h3>How to start</h3>
+          <ul class="steps">
+            <li>Take a brisk 30-minute walk five days a week. Brisk means you can talk but not sing.</li>
+            <li>Choose activities you enjoy: dancing, cycling, swimming, football or a class with a friend.</li>
+            <li>Take the stairs and walk short trips instead of driving.</li>
+            <li>If you sit for work, stand up and move for a few minutes every 30 to 60 minutes.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="habit" id="diet">
+      <figure class="photo" style="margin:0">
+        <img src="images/diet.jpg" alt="A colourful bowl of salad with tomatoes, avocado, chickpeas, sweet potato and greens" loading="lazy">
+        <div class="badge"><small>Target</small><b>½ plate veg &amp; fruit</b></div>
+      </figure>
+      <div>
+        <div class="cat"><span class="tag">Eat</span><span class="tag">Nutrition</span></div>
+        <h2>Eat a balanced diet</h2>
+        <p class="why">Food is fuel and repair material. A varied diet rich in plants gives you fibre, vitamins and minerals, keeps energy steady through the day, and lowers the risk of many long-term diseases.</p>
+        <p class="target-note">Fill the other half with ¼ whole grains and ¼ protein, and drink water with it.</p>
+        <div class="steps-box">
+          <h3>How to start</h3>
+          <ul class="steps">
+            <li>Add at least one vegetable to every meal and aim for five portions of fruit and veg a day.</li>
+            <li>Swap white bread, rice and pasta for whole-grain versions.</li>
+            <li>Choose beans, fish, eggs, poultry or tofu for protein. Keep processed meat occasional.</li>
+            <li>Cut back on sugary drinks and ultra-processed snacks, and keep salt under 5 g (about a teaspoon) a day.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="habit" id="sleep">
+      <figure class="photo" style="margin:0">
+        <img src="images/sleep.jpg" alt="A woman sleeping peacefully on a soft pillow" loading="lazy">
+        <div class="badge"><small>Target</small><b>7–9 hours / night</b></div>
+      </figure>
+      <div>
+        <div class="cat"><span class="tag">Rest</span><span class="tag">Recovery</span></div>
+        <h2>Get good sleep</h2>
+        <p class="why">Sleep is when your body repairs muscle, your brain stores memories, and your immune system recharges. Short sleep affects hunger hormones, mood and focus, so it quietly undermines every other habit on this page.</p>
+        <p class="target-note">That's for adults. Teenagers need 8–10 hours.</p>
+        <div class="steps-box">
+          <h3>How to start</h3>
+          <ul class="steps">
+            <li>Wake up at the same time every day, weekends included. A steady wake time sets your body clock.</li>
+            <li>Put screens away 30–60 minutes before bed and dim the lights.</li>
+            <li>Keep your bedroom cool, dark and quiet, around 18 °C (65 °F).</li>
+            <li>Avoid caffeine after early afternoon and heavy meals or alcohol close to bedtime.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <section class="band" aria-label="Getting started">
+      <div>
+        <p class="eyebrow" style="color:inherit;opacity:.8">Getting started</p>
+        <h2 style="margin-top:10px">Progress, not perfection.</h2>
+      </div>
+      <div>
+        <p>Trying to change everything at once rarely lasts. Instead:</p>
+        <ol>
+          <li>Pick one habit from this page.</li>
+          <li>Make it small enough to do on your worst day.</li>
+          <li>Do it for two weeks, then add the next.</li>
+        </ol>
+      </div>
+    </section>
+
+    <article class="habit" id="water">
+      <figure class="photo" style="margin:0">
+        <img src="images/water.jpg" alt="A clear glass of fresh water with bubbles" loading="lazy">
+        <div class="badge"><small>Target</small><b>6–8 glasses / day</b></div>
+      </figure>
+      <div>
+        <div class="cat"><span class="tag">Eat</span><span class="tag new">Added</span></div>
+        <h2>Stay hydrated</h2>
+        <p class="why">Water regulates your body temperature, carries nutrients, cushions joints and helps digestion. Even mild dehydration can cause headaches, tiredness and poor concentration.</p>
+        <p class="target-note">Drink more in hot weather or when you exercise.</p>
+        <div class="steps-box">
+          <h3>How to start</h3>
+          <ul class="steps">
+            <li>Drink a glass of water as soon as you wake up.</li>
+            <li>Carry a refillable bottle and finish it by set times through the day.</li>
+            <li>Check your urine: pale straw colour means you're well hydrated.</li>
+            <li>Swap sugary drinks for water, sparkling water, or tea without sugar.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="habit" id="mind">
+      <figure class="photo" style="margin:0">
+        <img src="images/mind.jpg" alt="A person meditating cross-legged at sunset among palm trees" loading="lazy">
+        <div class="badge"><small>Target</small><b>10 quiet min / day</b></div>
+      </figure>
+      <div>
+        <div class="cat"><span class="tag">Mind</span><span class="tag new">Added</span></div>
+        <h2>Manage stress and care for your mind</h2>
+        <p class="why">Long-term stress raises blood pressure, disturbs sleep and drives cravings. Looking after your mental health is as important as looking after your body, and the two affect each other.</p>
+        <p class="target-note">Breathing, prayer, journaling or simply sitting quietly all count.</p>
+        <div class="steps-box">
+          <h3>How to start</h3>
+          <ul class="steps">
+            <li>Try 4-7-8 breathing: in through the nose for 4, hold for 7, out slowly for 8. Repeat four times.</li>
+            <li>Write down what's on your mind before bed so it's on paper, not in your head.</li>
+            <li>Take real breaks from work and notifications, and learn to say no to extra commitments.</li>
+            <li>If low mood or anxiety lasts more than two weeks, talk to a doctor or counsellor.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="habit" id="outdoors">
+      <figure class="photo" style="margin:0">
+        <img src="images/outdoors.jpg" alt="A sunlit forest path between tall green trees" loading="lazy">
+        <div class="badge"><small>Target</small><b>120 min / week</b></div>
+      </figure>
+      <div>
+        <div class="cat"><span class="tag">Rest</span><span class="tag new">Added</span></div>
+        <h2>Get sunlight and time in nature</h2>
+        <p class="why">Morning daylight helps set your body clock, so you feel alert in the day and sleepy at night. Sunlight helps your skin make vitamin D, and time in green spaces is linked to lower stress and better mood.</p>
+        <p class="target-note">Parks, woods, gardens and time by water all count.</p>
+        <div class="steps-box">
+          <h3>How to start</h3>
+          <ul class="steps">
+            <li>Step outside for 10–15 minutes within an hour of waking up.</li>
+            <li>Take phone calls or lunch breaks outdoors when you can.</li>
+            <li>Plan one longer walk in a park, trail or beach each weekend.</li>
+            <li>Wear sunscreen and a hat when the UV index is 3 or higher.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="habit" id="social">
+      <figure class="photo" style="margin:0">
+        <img src="images/social.jpg" alt="A group of friends sitting with arms around each other looking out at the sea" loading="lazy">
+        <div class="badge"><small>Target</small><b>1 real chat / day</b></div>
+      </figure>
+      <div>
+        <div class="cat"><span class="tag">Connect</span><span class="tag new">Added</span></div>
+        <h2>Stay connected to people</h2>
+        <p class="why">Strong relationships are one of the most consistent predictors of a long, healthy life. Loneliness is linked to higher risk of heart disease, depression and memory decline, while good company eases stress.</p>
+        <p class="target-note">In person, by phone or on video.</p>
+        <div class="steps-box">
+          <h3>How to start</h3>
+          <ul class="steps">
+            <li>Put a weekly call or meet-up with a friend or family member in your calendar.</li>
+            <li>Share meals with others when you can, and keep phones off the table.</li>
+            <li>Join a club, team, faith group or class built around something you enjoy.</li>
+            <li>Volunteer. Helping others builds connection and purpose at the same time.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="habit" id="limits">
+      <figure class="photo" style="margin:0">
+        <img src="images/limits.jpg" alt="An alcohol-free mint and lime drink in a glass on a wooden board" loading="lazy">
+        <div class="badge"><small>Target</small><b>0 cigarettes · ≤ 14 units</b></div>
+      </figure>
+      <div>
+        <div class="cat"><span class="tag">Prevent</span><span class="tag new">Added</span></div>
+        <h2>Limit alcohol and avoid tobacco</h2>
+        <p class="why">Smoking and vaping damage your lungs, heart and blood vessels, and quitting at any age adds years to your life. Alcohol disrupts sleep, adds empty calories, and raises the risk of several cancers. Less is better.</p>
+        <p class="target-note">Keep alcohol to 14 units a week or less, spread over three or more days.</p>
+        <div class="steps-box">
+          <h3>How to start</h3>
+          <ul class="steps">
+            <li>Have several alcohol-free days each week and try alcohol-free drinks when you go out.</li>
+            <li>Alternate each alcoholic drink with a glass of water.</li>
+            <li>To quit smoking, combine a free stop-smoking service with nicotine replacement. It more than doubles your chances.</li>
+            <li>Notice your triggers (stress, certain friends, after meals) and plan a swap for each one.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="habit" id="checkups">
+      <figure class="photo" style="margin:0">
+        <img src="images/checkups.jpg" alt="A stethoscope resting beside a doctor's laptop" loading="lazy">
+        <div class="badge"><small>Target</small><b>Once a year</b></div>
+      </figure>
+      <div>
+        <div class="cat"><span class="tag">Prevent</span><span class="tag new">Added</span></div>
+        <h2>Get regular health check-ups</h2>
+        <p class="why">Many serious conditions, including high blood pressure, type 2 diabetes and some cancers, cause no symptoms early on. Regular checks catch problems when they are easiest to treat.</p>
+        <p class="target-note">Plus a dental check every 6–12 months.</p>
+        <div class="steps-box">
+          <h3>How to start</h3>
+          <ul class="steps">
+            <li>Know your numbers: blood pressure (healthy is below 120/80 mmHg), cholesterol, blood sugar and waist size.</li>
+            <li>Ask your doctor which cancer screenings are due for your age and family history.</li>
+            <li>Keep vaccinations up to date, including the yearly flu jab if recommended for you.</li>
+            <li>Book dental and eye checks, and don't ignore new lumps, pain or changes that last.</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <section class="checkin" id="checkin" aria-labelledby="checkinTitle">
+    <div>
+      <p class="eyebrow">Daily tracker</p>
+      <h2 id="checkinTitle">Today's check-in</h2>
+      <p class="note">Tick off what you managed today. Your ticks are saved in this browser and clear automatically tomorrow.</p>
+      <div class="ring">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="12"/>
+          <circle id="ringFg" cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73"/>
+        </svg>
+        <div class="count" aria-live="polite"><span id="countNum">0</span><small>OF 10 DONE</small></div>
+      </div>
+      <p id="cheer"></p>
+      <button type="button" class="reset" id="resetBtn">Clear today's ticks</button>
+    </div>
+    <ul class="checks" id="checks">
+      <li><label><img src="images/gym.jpg" alt=""><span class="lbl">Strength workout<small>or a planned rest day</small></span><input type="checkbox" id="c-gym"></label></li>
+      <li><label><img src="images/exercise.jpg" alt=""><span class="lbl">30 min of movement<small>walk, run, cycle, dance</small></span><input type="checkbox" id="c-move"></label></li>
+      <li><label><img src="images/diet.jpg" alt=""><span class="lbl">Veg at every meal<small>half the plate</small></span><input type="checkbox" id="c-veg"></label></li>
+      <li><label><img src="images/sleep.jpg" alt=""><span class="lbl">7+ hours of sleep<small>last night</small></span><input type="checkbox" id="c-sleep"></label></li>
+      <li><label><img src="images/water.jpg" alt=""><span class="lbl">6–8 glasses of water<small>bottle finished</small></span><input type="checkbox" id="c-water"></label></li>
+      <li><label><img src="images/mind.jpg" alt=""><span class="lbl">10 quiet minutes<small>breathing or journaling</small></span><input type="checkbox" id="c-mind"></label></li>
+      <li><label><img src="images/outdoors.jpg" alt=""><span class="lbl">Time outside<small>morning light counts</small></span><input type="checkbox" id="c-out"></label></li>
+      <li><label><img src="images/social.jpg" alt=""><span class="lbl">Talked with someone<small>a real conversation</small></span><input type="checkbox" id="c-social"></label></li>
+      <li><label><img src="images/limits.jpg" alt=""><span class="lbl">Alcohol- and smoke-free<small>or within your limit</small></span><input type="checkbox" id="c-limits"></label></li>
+      <li><label><img src="images/checkups.jpg" alt=""><span class="lbl">Screens off before bed<small>30–60 min</small></span><input type="checkbox" id="c-screen"></label></li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>This guide gives general information for healthy adults and is not medical advice. Targets come from common public-health guidance (such as the WHO and NHS) and may differ for children, older adults, pregnancy, or people with health conditions. Check with a doctor before starting a new exercise or diet plan.</p>
+    <p>Photos from Unsplash, used under the Unsplash License.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var KEY = "healthy-habits-checkin";
+  var today = new Date().toISOString().slice(0, 10);
+  var boxes = Array.prototype.slice.call(document.querySelectorAll("#checks input"));
+  var ring = document.getElementById("ringFg");
+  var num = document.getElementById("countNum");
+  var cheer = document.getElementById("cheer");
+  var C = 2 * Math.PI * 52;
+  var MESSAGES = ["Pick one to start.", "Good start.", "Building momentum.", "Over halfway there.", "Great day!", "All ten. Brilliant work!"];
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      var data = raw ? JSON.parse(raw) : null;
+      return data && data.date === today ? data.done || [] : [];
+    } catch (e) { return []; }
+  }
+  function save() {
+    var done = boxes.filter(function (b) { return b.checked; }).map(function (b) { return b.id; });
+    try { localStorage.setItem(KEY, JSON.stringify({ date: today, done: done })); } catch (e) {}
+  }
+  function render() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    num.textContent = n;
+    ring.style.strokeDashoffset = C * (1 - n / boxes.length);
+    cheer.textContent = n === 0 ? MESSAGES[0] : n === 10 ? MESSAGES[5] : n <= 2 ? MESSAGES[1] : n <= 5 ? MESSAGES[2] : n <= 7 ? MESSAGES[3] : MESSAGES[4];
+  }
+
+  var saved = load();
+  boxes.forEach(function (b) {
+    b.checked = saved.indexOf(b.id) !== -1;
+    b.addEventListener("change", function () { save(); render(); });
+  });
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    boxes.forEach(function (b) { b.checked = false; });
+    save(); render();
+  });
+  render();
+})();
+</script>
