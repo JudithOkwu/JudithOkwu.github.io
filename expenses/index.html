@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expense Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="./assets/index-Kgzw_HS0.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BFPLf8Fb.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header-inner">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 20V10" />
+            <path d="M10 20V4" />
+            <path d="M16 20v-7" />
+            <path d="M22 20H2" />
+          </svg>
+        </span>
+        <div>
+          <h1>Expense Tracker</h1>
+          <p class="tagline">Track your spending, month by month</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="card form-card" aria-labelledby="form-title">
+        <div class="form-heading">
+          <span class="form-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" />
+              <path d="M16 12h.01" />
+              <path d="M4 9h16" />
+            </svg>
+          </span>
+          <h2 id="form-title">Add expense</h2>
+        </div>
+        <form id="expense-form" novalidate>
+          <div class="field">
+            <label for="amount">Amount ($)</label>
+            <input
+              id="amount"
+              name="amount"
+              type="text"
+              inputmode="decimal"
+              autocomplete="off"
+              placeholder="0.00"
+              aria-describedby="amount-error"
+            />
+            <p class="field-error" id="amount-error" aria-live="polite"></p>
+          </div>
+
+          <div class="field">
+            <label for="category">Category</label>
+            <select id="category" name="category" aria-describedby="category-error"></select>
+            <p class="field-error" id="category-error" aria-live="polite"></p>
+          </div>
+
+          <div class="field">
+            <label for="date">Date</label>
+            <input id="date" name="date" type="date" aria-describedby="date-error" />
+            <p class="field-error" id="date-error" aria-live="polite"></p>
+          </div>
+
+          <div class="field">
+            <label for="note">Note <span class="optional">(optional)</span></label>
+            <input
+              id="note"
+              name="note"
+              type="text"
+              maxlength="200"
+              autocomplete="off"
+              placeholder="e.g. Lunch with Sam"
+              aria-describedby="note-error"
+            />
+            <p class="field-error" id="note-error" aria-live="polite"></p>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submit-btn">Add expense</button>
+            <button type="button" class="btn" id="cancel-edit" hidden>Cancel</button>
+          </div>
+        </form>
+      </section>
+
+      <nav class="month-bar" aria-label="Choose month">
+        <button type="button" class="btn btn-icon" id="prev-month" aria-label="Previous month">‹</button>
+        <h2 class="month-label" id="month-label" aria-live="polite"></h2>
+        <button type="button" class="btn btn-icon" id="next-month" aria-label="Next month">›</button>
+        <button type="button" class="btn btn-small" id="this-month">This month</button>
+      </nav>
+
+      <div class="overview">
+        <section class="card summary-card" aria-labelledby="summary-title">
+          <h2 id="summary-title" class="visually-hidden">Totals</h2>
+          <div class="summary-hero">
+            <p class="summary-label">Total spent</p>
+            <p class="summary-total" id="month-total">$0.00</p>
+            <p class="summary-count muted" id="month-count"></p>
+          </div>
+          <ul class="category-totals" id="category-totals"></ul>
+        </section>
+
+        <section class="card chart-card" aria-labelledby="chart-title">
+          <div class="card-header">
+            <h2 id="chart-title">Spending by category</h2>
+            <div class="segmented" role="group" aria-label="Chart type">
+              <button type="button" class="segment" data-chart-type="bar" aria-pressed="true">Bar</button>
+              <button type="button" class="segment" data-chart-type="doughnut" aria-pressed="false">Doughnut</button>
+            </div>
+          </div>
+          <div class="chart-box">
+            <canvas id="spending-chart" role="img" aria-label="Spending by category chart"></canvas>
+            <p class="chart-empty muted" id="chart-empty" hidden>Nothing to chart for this month yet.</p>
+          </div>
+        </section>
+      </div>
+
+      <section class="card list-card" aria-labelledby="list-title">
+        <div class="card-header">
+          <h2 id="list-title">Expenses</h2>
+          <div class="export-actions">
+            <button type="button" class="btn btn-small" id="export-month">Export month (CSV)</button>
+            <button type="button" class="btn btn-small" id="export-all">Export all (CSV)</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="expense-table">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Category</th>
+                <th scope="col">Note</th>
+                <th scope="col" class="num">Amount</th>
+                <th scope="col"><span class="visually-hidden">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="expense-rows"></tbody>
+          </table>
+        </div>
+        <p class="empty-state" id="empty-state" hidden></p>
+      </section>
+    </main>
+
+  </body>
+</html>

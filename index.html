@@ -250,6 +250,12 @@ h2 em { color: var(--accent); }
 .card.featured .preview.shot { padding: 40px 36px 0; place-items: start center; background: linear-gradient(160deg, #c4cbfb 0%, #ddd2f6 55%, #f5d5e7 100%); }
 .preview.shot img { display: block; width: min(100%, 360px); height: auto; border-radius: 16px 16px 0 0; box-shadow: 0 18px 40px -14px rgba(60, 40, 140, .45); transition: transform .35s; }
 .card.featured:hover .preview.shot img { transform: translateY(-6px); }
+/* Expense tracker: featured card with the screenshot on the right */
+.p3 { background: linear-gradient(135deg, #2a62d4 0%, #14213d 100%); }
+.card.featured .preview.site-shot { padding: 36px; place-items: center; }
+.card.featured .preview.site-shot img { border-radius: 10px; }
+.card.featured.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
+.card.featured.flip .preview { order: 2; }
 /* mini mockups */
 .mock { width: 100%; height: 100%; background: rgba(255,255,255,.95); border-radius: 10px; box-shadow: 0 12px 30px -10px rgba(0,0,0,.4); padding: 12px; display: flex; flex-direction: column; gap: 7px; transition: transform .35s; }
 .card:hover .mock { transform: scale(1.04) rotate(-1deg); }
@@ -325,6 +331,9 @@ button.copy:hover { transform: translateY(-2px); filter: brightness(1.08); }
   .card.featured .preview { min-height: 0; aspect-ratio: auto; padding: 28px; }
   .card.featured .preview.shot { height: 360px; padding: 32px 28px 0; }
   .card.featured .card-body { padding: 26px 24px 26px; }
+  .card.featured.flip { grid-template-columns: minmax(0, 1fr); }
+  .card.featured.flip .preview { order: 0; }
+  .card.featured .preview.site-shot { padding: 28px; }
 }
 @media (max-width: 640px) {
   .wrap { padding-inline: 18px; }
@@ -338,6 +347,7 @@ button.copy:hover { transform: translateY(-2px); filter: brightness(1.08); }
   .card.featured h3 { font-size: 1.9rem; }
   .card.featured .preview { padding: 18px; }
   .card.featured .preview.shot { height: 300px; padding: 24px 20px 0; }
+  .card.featured .preview.site-shot { padding: 18px; }
   .ctas .btn { flex: 1 1 auto; justify-content: center; }
   .mailbox { flex-direction: column; align-items: stretch; padding: 20px; }
   .email { font-size: 1.55rem; overflow-wrap: break-word; }
@@ -475,6 +485,25 @@ button.copy:hover { transform: translateY(-2px); filter: brightness(1.08); }
             <p>A practical guide to ten everyday healthy habits, from strength training, sleep and hydration to stress, sunlight and regular check-ups. Each habit comes with simple first steps, and a daily check-in lets you tick off what you've done and watch your progress ring fill up.</p>
             <div class="tags"><span>Health &amp; wellness</span><span>HTML</span><span>CSS</span><span>JavaScript</span></div>
             <a class="card-link stretch" href="https://judithokwu.github.io/healthy/healthy-habits.html" target="_blank" rel="noopener">Visit the site <span class="arrow">→</span></a>
+          </div>
+        </article>
+
+        <article class="card featured flip">
+          <div class="preview p3 site-shot">
+            <img src="images/expense-tracker.jpg" alt="Screenshot of the Expense Tracker: an add-expense form, October's total of $1,568.03 split by category, and a doughnut chart of spending" width="1200" height="840" loading="lazy">
+          </div>
+          <div class="card-body">
+            <div class="card-meta"><span>Web app · New</span><span>2026</span></div>
+            <h3>Expense Tracker</h3>
+            <p>An expense tracker I built with AI to see where my money goes each month. I log what I spend, and it totals everything by category, draws a chart, and exports my spending to a spreadsheet.</p>
+            <ul class="features">
+              <li>Add, edit and delete expenses</li>
+              <li>Monthly and per-category totals</li>
+              <li>Bar or doughnut chart by category</li>
+              <li>Export to CSV for spreadsheets</li>
+            </ul>
+            <div class="tags"><span>Vite</span><span>JavaScript</span><span>Chart.js</span><span>Local storage</span></div>
+            <a class="card-link stretch" href="https://judithokwu.github.io/expenses/" target="_blank" rel="noopener">Open the app <span class="arrow">→</span></a>
           </div>
         </article>
       </div>
