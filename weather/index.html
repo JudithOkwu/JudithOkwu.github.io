@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Search any city for the current weather and a 5-day forecast." />
+    <title>Skycast · Weather Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module" crossorigin src="./assets/index-DgW9BqqI.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CCPrIh3q.css">
+  </head>
+  <body data-theme="sunny">
+    <div class="sky" aria-hidden="true">
+      <div class="sky__glow"></div>
+      <div class="sky__glow sky__glow--2"></div>
+    </div>
+
+    <div class="app">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Skycast home">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="24" cy="24" r="10" fill="#FFC94A" />
+            <path fill="#fff" d="M26 52h24a9 9 0 0 0 0-18 13 13 0 0 0-24.6 3.6A7.2 7.2 0 0 0 26 52z" />
+          </svg>
+          <span>Skycast</span>
+        </a>
+
+        <form class="search" id="search-form" role="search" autocomplete="off">
+          <label class="visually-hidden" for="search-input">City name</label>
+          <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2" />
+            <path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          <input id="search-input" type="search" placeholder="Search for a city…" maxlength="80" />
+          <button class="search__btn" id="search-btn" type="submit">
+            <span class="search__label">Search</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <div class="units" role="group" aria-label="Temperature units">
+          <button type="button" data-units="metric" aria-pressed="true">°C</button>
+          <button type="button" data-units="imperial" aria-pressed="false">°F</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="main" id="main" aria-live="polite" aria-busy="false"></section>
+
+        <aside class="panel favourites" aria-labelledby="fav-title">
+          <div class="panel__head">
+            <h2 id="fav-title">Favourite cities</h2>
+            <span class="count" id="fav-count">0</span>
+          </div>
+          <ul class="fav-list" id="fav-list"></ul>
+          <p class="fav-empty" id="fav-empty">
+            Tap the <span class="star-inline">★</span> on a city to save it here for one-click access.
+          </p>
+        </aside>
+      </main>
+
+      <footer class="footer">
+        Weather data by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a>
+      </footer>
+    </div>
+
+  </body>
+</html>

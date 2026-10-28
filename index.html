@@ -255,6 +255,8 @@ h2 em { color: var(--accent); }
 .card.featured .preview.site-shot { padding: 36px; place-items: center; }
 .card.featured .preview.site-shot img { border-radius: 10px; }
 .card.featured.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
+/* Weather dashboard: sky gradient behind the screenshot */
+.p4 { background: linear-gradient(160deg, #2479e0 0%, #4fa8ff 55%, #ffb36b 100%); }
 .card.featured.flip .preview { order: 2; }
 /* mini mockups */
 .mock { width: 100%; height: 100%; background: rgba(255,255,255,.95); border-radius: 10px; box-shadow: 0 12px 30px -10px rgba(0,0,0,.4); padding: 12px; display: flex; flex-direction: column; gap: 7px; transition: transform .35s; }
@@ -493,7 +495,7 @@ button.copy:hover { transform: translateY(-2px); filter: brightness(1.08); }
             <img src="images/expense-tracker.jpg?v=2" alt="Screenshot of the Expense Tracker: an add-expense form, October's total of $1,568.03 split by category, and a doughnut chart of spending" width="1200" height="840" loading="lazy">
           </div>
           <div class="card-body">
-            <div class="card-meta"><span>Web app · New</span><span>2026</span></div>
+            <div class="card-meta"><span>Web app</span><span>2026</span></div>
             <h3>Expense Tracker</h3>
             <p>An expense tracker I built with AI to see where my money goes each month. I log what I spend, and it totals everything by category, draws a chart, and exports my spending to a spreadsheet.</p>
             <ul class="features">
@@ -504,6 +506,25 @@ button.copy:hover { transform: translateY(-2px); filter: brightness(1.08); }
             </ul>
             <div class="tags"><span>Vite</span><span>JavaScript</span><span>Chart.js</span><span>Local storage</span></div>
             <a class="card-link stretch" href="https://judithokwu.com/expenses/" target="_blank" rel="noopener">Open the app <span class="arrow">→</span></a>
+          </div>
+        </article>
+
+        <article class="card featured">
+          <div class="preview p4 site-shot">
+            <img src="images/weather-dashboard.jpg" alt="Screenshot of the Skycast weather dashboard: Mexico City at 24°C and mainly clear, with humidity, wind and UV tiles and a 5-day forecast" width="1200" height="960" loading="lazy">
+          </div>
+          <div class="card-body">
+            <div class="card-meta"><span>Web app · New</span><span>2026</span></div>
+            <h3>Weather Dashboard</h3>
+            <p>A weather dashboard I built with AI. Search any city to see the weather right now and the next five days, and save favourite cities for one-click access. The background changes with the sky: sunny, night, rain, snow or storm.</p>
+            <ul class="features">
+              <li>Current weather and a 5-day forecast</li>
+              <li>Save favourite cities</li>
+              <li>Switch between °C and °F</li>
+              <li>Friendly messages when offline or a city isn't found</li>
+            </ul>
+            <div class="tags"><span>Vite</span><span>JavaScript</span><span>Weather API</span><span>Local storage</span></div>
+            <a class="card-link stretch" href="https://judithokwu.com/weather/" target="_blank" rel="noopener">Open the app <span class="arrow">→</span></a>
           </div>
         </article>
       </div>
