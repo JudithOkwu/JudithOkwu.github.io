@@ -10,8 +10,8 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="./assets/index-Kgzw_HS0.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BFPLf8Fb.css">
+    <script type="module" crossorigin src="./assets/index-CrX6tyb3.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DfqRfkh4.css">
   </head>
   <body>
     <header class="site-header">
@@ -27,6 +27,10 @@
         <div>
           <h1>Expense Tracker</h1>
           <p class="tagline">Track your spending, month by month</p>
+        </div>
+        <div class="currency-picker">
+          <label for="currency">Currency</label>
+          <select id="currency" title="Changes the currency shown. Amounts are not converted."></select>
         </div>
       </div>
     </header>
@@ -45,7 +49,7 @@
         </div>
         <form id="expense-form" novalidate>
           <div class="field">
-            <label for="amount">Amount ($)</label>
+            <label for="amount">Amount (<span id="amount-symbol">$</span>)</label>
             <input
               id="amount"
               name="amount"
