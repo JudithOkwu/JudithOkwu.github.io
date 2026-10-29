@@ -5,14 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Search any city for the current weather and a 5-day forecast." />
     <title>Skycast · Weather Dashboard</title>
+    <script>
+      // Pick light or dark mode before the page draws, so it doesn't flash.
+      // main.js keeps it up to date after that.
+      (function () {
+        var saved = null;
+        try {
+          saved = JSON.parse(localStorage.getItem('weather-dashboard.mode.v1'));
+        } catch (e) {}
+        var dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.mode = dark ? 'dark' : 'light';
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="./assets/index-DgW9BqqI.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-CCPrIh3q.css">
+    <script type="module" crossorigin src="./assets/index-G8hZ7kUU.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-8JLz6p0Q.css">
   </head>
   <body data-theme="sunny">
     <div class="sky" aria-hidden="true">
@@ -36,7 +48,7 @@
             <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2" />
             <path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
           </svg>
-          <input id="search-input" type="search" placeholder="Search for a city…" maxlength="80" />
+          <input id="search-input" type="search" placeholder="Search a city, e.g. Springfield, Illinois" maxlength="80" />
           <button class="search__btn" id="search-btn" type="submit">
             <span class="search__label">Search</span>
             <span class="spinner" aria-hidden="true"></span>
@@ -47,6 +59,16 @@
           <button type="button" data-units="metric" aria-pressed="true">°C</button>
           <button type="button" data-units="imperial" aria-pressed="false">°F</button>
         </div>
+
+        <button type="button" class="mode-btn" id="mode-btn" aria-label="Switch to dark mode">
+          <svg class="mode-btn__sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.5" />
+            <path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8" />
+          </svg>
+          <svg class="mode-btn__moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.6 6.6 0 0 0 10.5 10.5z" />
+          </svg>
+        </button>
       </header>
 
       <main class="layout">
